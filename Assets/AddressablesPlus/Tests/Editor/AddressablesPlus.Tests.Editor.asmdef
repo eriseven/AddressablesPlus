@@ -1,11 +1,14 @@
 {
-    "name": "AddressablesPlus.Tests.Runtime",
+    "name": "AddressablesPlus.Tests.Editor",
     "rootNamespace": "",
     "references": [
+        "AddressablesPlus.Runtime",
         "UnityEngine.TestRunner",
-        "AddressablesPlus.Runtime"
+        "UnityEditor.TestRunner"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,

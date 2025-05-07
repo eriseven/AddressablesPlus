@@ -1,10 +1,12 @@
 {
   "dependencies": {
     "com.cysharp.unitask": "2.5.10",
+    "com.gilzoide.easy-project-settings": "1.1.0",
     "com.gwiazdorrr.betterstreamingassets": "https://github.com/gwiazdorrr/BetterStreamingAssets.git",
-    "com.unity.nuget.newtonsoft-json": "3.2.1",
     "com.unity.addressables": "1.22.3",
     "com.unity.ide.rider": "3.0.36",
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.profiling.core": "1.0.2",
     "com.unity.test-framework": "1.1.33",
     "com.unity.ugui": "1.0.0",
     "com.unity.modules.ai": "1.0.0",
@@ -44,7 +46,8 @@
       "name": "package.openupm.com",
       "url": "https://package.openupm.com",
       "scopes": [
-        "com.cysharp.unitask"
+        "com.cysharp.unitask",
+        "com.gilzoide.easy-project-settings"
       ]
     }
   ]
