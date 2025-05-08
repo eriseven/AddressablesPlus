@@ -2,7 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using Gilzoide.EasyProjectSettings;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace AddressablesPlus.Runtime
@@ -32,39 +35,52 @@ namespace AddressablesPlus.Runtime
 
         private static Settings settings;
 
-        private const string VersionFileName = "version.txt";
-        private const string FilesInfoFileName = "files_info.txt";
-        
-        static private Dictionary<string, FileInfo> currVersionFiles = new(); 
-        
+        // public const string VersionFileName = "version.txt";
+        public const string FilesInfoFileName = "files_info.txt";
+
+        static private Dictionary<string, FileInfo> baseVersionFiles = new();
+        static private Dictionary<string, FileInfo> currVersionFiles = new();
+
         public static void Initialize(VersionInfo versionInfo = null)
         {
-            settings = ProjectSettings.Load<Settings>();
-            
-            BetterStreamingAssets.Initialize();
-
-            if (BetterStreamingAssets.FileExists(FilesInfoFileName))
-            {
-                
-            }
-            else
-            {
-                
-            }
-            
-            
             baseVersion = new Version(Application.version);
             basePath = Path.Combine(Application.streamingAssetsPath, baseVersion.ToString()).Replace('\\', '/');
-            
-            
+
+            settings = ProjectSettings.Load<Settings>();
+
+            BetterStreamingAssets.Initialize();
+
+            try
+            {
+                var baseVersionInfo = JsonConvert.DeserializeObject<VersionInfo>(
+                    Encoding.UTF8.GetString(BetterStreamingAssets.ReadAllBytes(FilesInfoFileName)));
+                baseVersionFiles = baseVersionInfo.files.ToDictionary(x => x.fileName, x => x);
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                baseVersionFiles = new();
+                return;
+            }
+
+
             if (versionInfo != null)
             {
                 if (Version.TryParse(versionInfo.version, out var ver))
                 {
                     currVersion = ver;
-                    currVersionPath = Path.Combine(Application.persistentDataPath, ver.ToString()).Replace('\\', '/');
+                    if (currVersion > baseVersion)
+                    {
+                        currVersionPath = Path.Combine(Application.persistentDataPath, ver.ToString())
+                            .Replace('\\', '/');
+                    }
+                    else
+                    {
+                        currVersion = baseVersion;
+                        currVersionPath = basePath;
+                    }
                     
-                    // Load FileInfo
+                    currVersionFiles = versionInfo.files.ToDictionary(x => x.fileName, x => x);
                 }
                 else
                 {
