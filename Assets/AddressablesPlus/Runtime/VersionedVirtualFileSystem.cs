@@ -79,7 +79,7 @@ namespace AddressablesPlus.Runtime
                         currVersion = baseVersion;
                         currVersionPath = basePath;
                     }
-                    
+
                     currVersionFiles = versionInfo.files.ToDictionary(x => x.fileName, x => x);
                 }
                 else
@@ -88,6 +88,76 @@ namespace AddressablesPlus.Runtime
                     currVersionPath = basePath;
                 }
             }
+        }
+
+        public static bool FileExists(string path)
+        {
+            bool exists = false;
+            if (currVersion > baseVersion && currVersionFiles.ContainsKey(path))
+            {
+                exists = File.Exists(Path.Combine(currVersionPath, path));
+            }
+
+            if (!exists && baseVersionFiles.ContainsKey(path))
+            {
+                exists = BetterStreamingAssets.FileExists(path);
+            }
+
+            return exists;
+        }
+
+        public static byte[] ReadAllBytes(string path)
+        {
+            try
+            {
+                if (currVersion > baseVersion && currVersionFiles.ContainsKey(path))
+                {
+                    var versionPath = Path.Combine(currVersionPath, path);
+                    if (File.Exists(versionPath))
+                    {
+                        return File.ReadAllBytes(Path.Combine(currVersionPath, path));
+                    }
+                }
+
+                if (baseVersionFiles.ContainsKey(path))
+                {
+                    return BetterStreamingAssets.ReadAllBytes(path);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                return null;
+            }
+
+            return null;
+        }
+
+        public static Stream OpenRead(string path)
+        {
+            try
+            {
+                if (currVersion > baseVersion && currVersionFiles.ContainsKey(path))
+                {
+                    var versionPath = Path.Combine(currVersionPath, path);
+                    if (File.Exists(versionPath))
+                    {
+                        return File.OpenRead(Path.Combine(currVersionPath, path));
+                    }
+                }
+
+                if (baseVersionFiles.ContainsKey(path))
+                {
+                    return BetterStreamingAssets.OpenRead(path);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                return null;
+            }
+
+            return null;
         }
     }
 }
